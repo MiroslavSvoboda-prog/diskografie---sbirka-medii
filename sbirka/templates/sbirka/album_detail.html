@@ -1,0 +1,17 @@
+{% extends 'sbirka/base.html' %}
+
+{% block title %}{{ album.nazev }} – Diskografie{% endblock %}
+
+{% block content %}
+    <h1>{{ album.nazev }}</h1>
+    <p><strong>Interpret:</strong> {{ album.interpret }}</p>
+    <p><strong>Rok vydání:</strong> {{ album.rok_vydani }}</p>
+    <p><strong>Žánr:</strong> {{ album.zanr|default:"–" }}</p>
+    <p><strong>Počet skladeb:</strong> {{ album.pocet_skladeb|default:"–" }}</p>
+    <p><strong>Formát:</strong> {{ album.get_format_display }}</p>
+    <p><strong>Hodnocení:</strong> {{ album.hodnoceni|default:"neohodnoceno" }}</p>
+    {% if album.poznamka %}
+        <p><strong>Poznámka:</strong> {{ album.poznamka }}</p>
+    {% endif %}
+    <p><a href="{% url 'sbirka:album_list' %}">← Zpět na seznam alb</a></p>
+{% endblock %}

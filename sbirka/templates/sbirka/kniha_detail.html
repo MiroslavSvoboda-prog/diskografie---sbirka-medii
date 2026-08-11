@@ -1,0 +1,18 @@
+{% extends 'sbirka/base.html' %}
+
+{% block title %}{{ kniha.nazev }} – Diskografie{% endblock %}
+
+{% block content %}
+    <h1>{{ kniha.nazev }}</h1>
+    <p><strong>Autor:</strong> {{ kniha.autor }}</p>
+    <p><strong>Rok vydání:</strong> {{ kniha.rok_vydani }}</p>
+    <p><strong>Žánr:</strong> {{ kniha.zanr|default:"–" }}</p>
+    <p><strong>Počet stran:</strong> {{ kniha.pocet_stran|default:"–" }}</p>
+    <p><strong>ISBN:</strong> {{ kniha.isbn|default:"–" }}</p>
+    <p><strong>Formát:</strong> {{ kniha.get_format_display }}</p>
+    <p><strong>Hodnocení:</strong> {{ kniha.hodnoceni|default:"neohodnoceno" }}</p>
+    {% if kniha.poznamka %}
+        <p><strong>Poznámka:</strong> {{ kniha.poznamka }}</p>
+    {% endif %}
+    <p><a href="{% url 'sbirka:kniha_list' %}">← Zpět na seznam knih</a></p>
+{% endblock %}

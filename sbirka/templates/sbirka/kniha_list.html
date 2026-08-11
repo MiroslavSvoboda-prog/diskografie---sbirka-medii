@@ -1,0 +1,19 @@
+{% extends 'sbirka/base.html' %}
+
+{% block title %}Knihy – Diskografie{% endblock %}
+
+{% block content %}
+    <h1>Knihy</h1>
+    <ul>
+        {% for kniha in knihy %}
+            <li>
+                <a href="{% url 'sbirka:kniha_detail' pk=kniha.pk %}">
+                    {{ kniha.nazev }}
+                </a>
+                – {{ kniha.autor }} ({{ kniha.rok_vydani }})
+            </li>
+        {% empty %}
+            <li>Zatím žádné knihy.</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

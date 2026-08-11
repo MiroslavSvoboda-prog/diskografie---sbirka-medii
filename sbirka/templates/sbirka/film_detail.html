@@ -1,0 +1,17 @@
+{% extends 'sbirka/base.html' %}
+
+{% block title %}{{ film.nazev }} – Diskografie{% endblock %}
+
+{% block content %}
+    <h1>{{ film.nazev }}</h1>
+    <p><strong>Režisér:</strong> {{ film.reziser }}</p>
+    <p><strong>Rok vydání:</strong> {{ film.rok_vydani }}</p>
+    <p><strong>Žánr:</strong> {{ film.zanr|default:"–" }}</p>
+    <p><strong>Délka:</strong> {{ film.delka_minuty|default:"–" }} min</p>
+    <p><strong>Formát:</strong> {{ film.get_format_display }}</p>
+    <p><strong>Hodnocení:</strong> {{ film.hodnoceni|default:"neohodnoceno" }}</p>
+    {% if film.poznamka %}
+        <p><strong>Poznámka:</strong> {{ film.poznamka }}</p>
+    {% endif %}
+    <p><a href="{% url 'sbirka:film_list' %}">← Zpět na seznam filmů</a></p>
+{% endblock %}

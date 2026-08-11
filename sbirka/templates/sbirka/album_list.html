@@ -1,0 +1,19 @@
+{% extends 'sbirka/base.html' %}
+
+{% block title %}Alba – Diskografie{% endblock %}
+
+{% block content %}
+    <h1>Alba</h1>
+    <ul>
+        {% for album in alba %}
+            <li>
+                <a href="{% url 'sbirka:album_detail' pk=album.pk %}">
+                    {{ album.nazev }}
+                </a>
+                – {{ album.interpret }} ({{ album.rok_vydani }})
+            </li>
+        {% empty %}
+            <li>Zatím žádná alba.</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

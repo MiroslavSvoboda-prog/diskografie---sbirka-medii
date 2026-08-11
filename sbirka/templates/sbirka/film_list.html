@@ -1,0 +1,19 @@
+{% extends 'sbirka/base.html' %}
+
+{% block title %}Filmy – Diskografie{% endblock %}
+
+{% block content %}
+    <h1>Filmy</h1>
+    <ul>
+        {% for film in filmy %}
+            <li>
+                <a href="{% url 'sbirka:film_detail' pk=film.pk %}">
+                    {{ film.nazev }}
+                </a>
+                – {{ film.reziser }} ({{ film.rok_vydani }})
+            </li>
+        {% empty %}
+            <li>Zatím žádné filmy.</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

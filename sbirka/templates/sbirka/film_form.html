@@ -1,0 +1,15 @@
+{% extends 'sbirka/base.html' %}
+
+{% block title %}
+    {% if film %}Upravit film{% else %}Nový film{% endif %} – Diskografie
+{% endblock %}
+
+{% block content %}
+    <h1>{% if film %}Upravit film{% else %}Nový film{% endif %}</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Uložit</button>
+    </form>
+    <p><a href="{% url 'sbirka:film_list' %}">← Zpět na seznam filmů</a></p>
+{% endblock %}

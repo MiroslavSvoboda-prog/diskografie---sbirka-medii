@@ -14,5 +14,9 @@
     {% if kniha.poznamka %}
         <p><strong>Poznámka:</strong> {{ kniha.poznamka }}</p>
     {% endif %}
-    <p><a href="{% url 'sbirka:kniha_list' %}">← Zpět na seznam knih</a></p>
+    <p>
+        <a href="{% url 'sbirka:kniha_list' %}">← Zpět na seznam knih</a> |
+        <a href="{% url 'sbirka:kniha_update' pk=kniha.pk %}">Upravit</a> |
+        <a href="{% url 'sbirka:kniha_delete' pk=kniha.pk %}">Smazat</a>
+    </p>
 {% endblock %}

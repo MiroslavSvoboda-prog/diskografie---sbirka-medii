@@ -4,6 +4,7 @@
 
 {% block content %}
     <h1>Knihy</h1>
+    <p><a href="{% url 'sbirka:kniha_create' %}">+ Přidat novou knihu</a></p>
     <ul>
         {% for kniha in knihy %}
             <li>

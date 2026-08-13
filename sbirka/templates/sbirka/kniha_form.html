@@ -1,0 +1,15 @@
+{% extends 'sbirka/base.html' %}
+
+{% block title %}
+    {% if kniha %}Upravit knihu{% else %}Nová kniha{% endif %} – Diskografie
+{% endblock %}
+
+{% block content %}
+    <h1>{% if kniha %}Upravit knihu{% else %}Nová kniha{% endif %}</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Uložit</button>
+    </form>
+    <p><a href="{% url 'sbirka:kniha_list' %}">← Zpět na seznam knih</a></p>
+{% endblock %}

@@ -13,5 +13,9 @@
     {% if film.poznamka %}
         <p><strong>Poznámka:</strong> {{ film.poznamka }}</p>
     {% endif %}
-    <p><a href="{% url 'sbirka:film_list' %}">← Zpět na seznam filmů</a></p>
+    <p>
+        <a href="{% url 'sbirka:film_list' %}">← Zpět na seznam filmů</a> |
+        <a href="{% url 'sbirka:film_update' pk=film.pk %}">Upravit</a> |
+        <a href="{% url 'sbirka:film_delete' pk=film.pk %}">Smazat</a>
+    </p>
 {% endblock %}

@@ -8,8 +8,8 @@ Webová aplikace v Django pro evidenci osobní sbírky alb, filmů a knih. Proje
 - Sdílená datová struktura (roky vydání, hodnocení, poznámky) postavená na abstraktní bázové třídě
 - Přehledová domovská stránka s počty položek v jednotlivých kategoriích
 - Samostatné seznamy a detaily pro každý typ média
-- Administrace přes Django admin (přidávání, editace, mazání záznamů)
-- 🚧 Formuláře pro přidávání/editaci přímo v uživatelském rozhraní (ve vývoji)
+- Plný CRUD přímo v uživatelském rozhraní – přidávání, editace i mazání záznamů (s potvrzovací stránkou u mazání)
+- Administrace přes Django admin
 
 ## Technologie
 
@@ -62,9 +62,10 @@ Aplikace poběží na `http://127.0.0.1:8000/`, administrace na `http://127.0.0.
 - Datový model a admin rozhraní
 - Class-based views (list/detail) pro všechny tři typy médií
 - HTML šablony s dědičností (`base.html` + bloky)
+- Formuláře pro přidávání/editaci/mazání záznamů (CreateView, UpdateView, DeleteView)
+
 
 📋 Plánováno:
-- Formuláře pro přidávání/editaci/mazání záznamů (CreateView, UpdateView, DeleteView)
 - Základní stylování (CSS)
 - Testy
 - CLI nástroj nad stejnými modely

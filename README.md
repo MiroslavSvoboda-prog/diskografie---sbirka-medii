@@ -17,6 +17,26 @@ Webová aplikace v Django pro evidenci osobní sbírky alb, filmů a knih. Proje
 - Django 6.1
 - SQLite (vývojová databáze)
 
+## Automatizované testy
+
+Aplikace `sbirka` má 25 testů v `sbirka/tests.py`, běží nad samostatnou testovací
+SQLite databází.
+
+Spuštění:
+```bash
+python manage.py test sbirka
+```
+
+Pokrytí:
+- **Modely** (Album, Film, Kniha) – `__str__`, výchozí hodnota `format`, řazení podle
+  data přidání (Album)
+- **HomeView** – správný počet položek v kontextu
+- **CRUD views** (Album, Film, Kniha) – list, detail (i 404 pro neexistující), create
+  (GET+POST), update, delete – ověřuje status kódy, šablony, přesměrování a skutečné
+  změny v databázi
+
+Zatím chybí: testy validace formulářů.
+
 ## Struktura projektu
 diskografie_project/
 ├── diskografie_projekt/ # Django konfigurace (settings, hlavní urls)
@@ -63,11 +83,11 @@ Aplikace poběží na `http://127.0.0.1:8000/`, administrace na `http://127.0.0.
 - Class-based views (list/detail) pro všechny tři typy médií
 - HTML šablony s dědičností (`base.html` + bloky)
 - Formuláře pro přidávání/editaci/mazání záznamů (CreateView, UpdateView, DeleteView)
+- Testy
 
 
 📋 Plánováno:
 - Základní stylování (CSS)
-- Testy
 - CLI nástroj nad stejnými modely
 
 ## Autor

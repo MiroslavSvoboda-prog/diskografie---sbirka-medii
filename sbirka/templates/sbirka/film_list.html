@@ -4,14 +4,16 @@
 
 {% block content %}
     <h1>Filmy</h1>
-    <p><a href="{% url 'sbirka:film_create' %}">+ Přidat nový film</a></p>
+    <p><a class="btn" href="{% url 'sbirka:film_create' %}">+ Přidat nový film</a></p>
     <ul>
         {% for film in filmy %}
             <li>
-                <a href="{% url 'sbirka:film_detail' pk=film.pk %}">
-                    {{ film.nazev }}
-                </a>
-                – {{ film.reziser }} ({{ film.rok_vydani }})
+                <div class="card card--film">
+                    <a href="{% url 'sbirka:film_detail' pk=film.pk %}">
+                        {{ film.nazev }}
+                    </a>
+                    – {{ film.reziser }} ({{ film.rok_vydani }})
+                </div>
             </li>
         {% empty %}
             <li>Zatím žádné filmy.</li>

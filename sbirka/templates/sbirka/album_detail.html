@@ -3,19 +3,30 @@
 {% block title %}{{ album.nazev }} – Diskografie{% endblock %}
 
 {% block content %}
-    <h1>{{ album.nazev }}</h1>
-    <p><strong>Interpret:</strong> {{ album.interpret }}</p>
-    <p><strong>Rok vydání:</strong> {{ album.rok_vydani }}</p>
-    <p><strong>Žánr:</strong> {{ album.zanr|default:"–" }}</p>
-    <p><strong>Počet skladeb:</strong> {{ album.pocet_skladeb|default:"–" }}</p>
-    <p><strong>Formát:</strong> {{ album.get_format_display }}</p>
-    <p><strong>Hodnocení:</strong> {{ album.hodnoceni|default:"neohodnoceno" }}</p>
-    {% if album.poznamka %}
-        <p><strong>Poznámka:</strong> {{ album.poznamka }}</p>
-    {% endif %}
-    <p>
-        <a href="{% url 'sbirka:album_list' %}">← Zpět na seznam alb</a> |
-        <a href="{% url 'sbirka:album_update' pk=album.pk %}">Upravit</a> |
-        <a href="{% url 'sbirka:album_delete' pk=album.pk %}">Smazat</a>
-    </p>
+    <div class="detail-panel detail-panel--album">
+        <h1>{{ album.nazev }}</h1>
+        <dl class="detail-list">
+            <dt>Interpret</dt>
+            <dd>{{ album.interpret }}</dd>
+            <dt>Rok vydání</dt>
+            <dd>{{ album.rok_vydani }}</dd>
+            <dt>Žánr</dt>
+            <dd>{{ album.zanr|default:"–" }}</dd>
+            <dt>Počet skladeb</dt>
+            <dd>{{ album.pocet_skladeb|default:"–" }}</dd>
+            <dt>Formát</dt>
+            <dd>{{ album.get_format_display }}</dd>
+            <dt>Hodnocení</dt>
+            <dd>{{ album.hodnoceni|default:"neohodnoceno" }}</dd>
+            {% if album.poznamka %}
+                <dt>Poznámka</dt>
+                <dd>{{ album.poznamka }}</dd>
+            {% endif %}
+        </dl>
+        <div class="detail-actions">
+            <a class="btn btn--secondary" href="{% url 'sbirka:album_list' %}">← Zpět na seznam alb</a>
+            <a class="btn btn--album" href="{% url 'sbirka:album_update' pk=album.pk %}">Upravit</a>
+            <a class="btn btn--danger" href="{% url 'sbirka:album_delete' pk=album.pk %}">Smazat</a>
+        </div>
+    </div>
 {% endblock %}

@@ -3,20 +3,32 @@
 {% block title %}{{ kniha.nazev }} – Diskografie{% endblock %}
 
 {% block content %}
-    <h1>{{ kniha.nazev }}</h1>
-    <p><strong>Autor:</strong> {{ kniha.autor }}</p>
-    <p><strong>Rok vydání:</strong> {{ kniha.rok_vydani }}</p>
-    <p><strong>Žánr:</strong> {{ kniha.zanr|default:"–" }}</p>
-    <p><strong>Počet stran:</strong> {{ kniha.pocet_stran|default:"–" }}</p>
-    <p><strong>ISBN:</strong> {{ kniha.isbn|default:"–" }}</p>
-    <p><strong>Formát:</strong> {{ kniha.get_format_display }}</p>
-    <p><strong>Hodnocení:</strong> {{ kniha.hodnoceni|default:"neohodnoceno" }}</p>
-    {% if kniha.poznamka %}
-        <p><strong>Poznámka:</strong> {{ kniha.poznamka }}</p>
-    {% endif %}
-    <p>
-        <a href="{% url 'sbirka:kniha_list' %}">← Zpět na seznam knih</a> |
-        <a href="{% url 'sbirka:kniha_update' pk=kniha.pk %}">Upravit</a> |
-        <a href="{% url 'sbirka:kniha_delete' pk=kniha.pk %}">Smazat</a>
-    </p>
+    <div class="detail-panel detail-panel--kniha">
+        <h1>{{ kniha.nazev }}</h1>
+        <dl class="detail-list">
+            <dt>Autor</dt>
+            <dd>{{ kniha.autor }}</dd>
+            <dt>Rok vydání</dt>
+            <dd>{{ kniha.rok_vydani }}</dd>
+            <dt>Žánr</dt>
+            <dd>{{ kniha.zanr|default:"–" }}</dd>
+            <dt>Počet stran</dt>
+            <dd>{{ kniha.pocet_stran|default:"–" }}</dd>
+            <dt>ISBN</dt>
+            <dd>{{ kniha.isbn|default:"–" }}</dd>
+            <dt>Formát</dt>
+            <dd>{{ kniha.get_format_display }}</dd>
+            <dt>Hodnocení</dt>
+            <dd>{{ kniha.hodnoceni|default:"neohodnoceno" }}</dd>
+            {% if kniha.poznamka %}
+                <dt>Poznámka</dt>
+                <dd>{{ kniha.poznamka }}</dd>
+            {% endif %}
+        </dl>
+        <div class="detail-actions">
+            <a class="btn btn--secondary" href="{% url 'sbirka:kniha_list' %}">← Zpět na seznam knih</a>
+            <a class="btn btn--kniha" href="{% url 'sbirka:kniha_update' pk=kniha.pk %}">Upravit</a>
+            <a class="btn btn--danger" href="{% url 'sbirka:kniha_delete' pk=kniha.pk %}">Smazat</a>
+        </div>
+    </div>
 {% endblock %}

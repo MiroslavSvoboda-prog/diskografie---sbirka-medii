@@ -4,14 +4,16 @@
 
 {% block content %}
     <h1>Alba</h1>
-    <p><a href="{% url 'sbirka:album_create' %}">+ Přidat nové album</a></p>
+    <p><a class="btn" href="{% url 'sbirka:album_create' %}">+ Přidat nové album</a></p>
     <ul>
         {% for album in alba %}
             <li>
-                <a href="{% url 'sbirka:album_detail' pk=album.pk %}">
-                    {{ album.nazev }}
-                </a>
-                – {{ album.interpret }} ({{ album.rok_vydani }})
+                <div class="card card--album">
+                    <a href="{% url 'sbirka:album_detail' pk=album.pk %}">
+                        {{ album.nazev }}
+                    </a>
+                    – {{ album.interpret }} ({{ album.rok_vydani }})
+                </div>
             </li>
         {% empty %}
             <li>Zatím žádná alba.</li>

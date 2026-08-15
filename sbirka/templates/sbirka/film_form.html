@@ -5,11 +5,13 @@
 {% endblock %}
 
 {% block content %}
-    <h1>{% if film %}Upravit film{% else %}Nový film{% endif %}</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Uložit</button>
-    </form>
-    <p><a href="{% url 'sbirka:film_list' %}">← Zpět na seznam filmů</a></p>
+    <div class="form-panel form-panel--film">
+        <h1>{% if film %}Upravit film{% else %}Nový film{% endif %}</h1>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn">Uložit</button>
+        </form>
+    </div>
+    <p><a class="btn btn--secondary" href="{% url 'sbirka:film_list' %}">← Zpět na seznam filmů</a></p>
 {% endblock %}

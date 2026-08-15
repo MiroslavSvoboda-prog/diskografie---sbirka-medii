@@ -3,19 +3,30 @@
 {% block title %}{{ film.nazev }} – Diskografie{% endblock %}
 
 {% block content %}
-    <h1>{{ film.nazev }}</h1>
-    <p><strong>Režisér:</strong> {{ film.reziser }}</p>
-    <p><strong>Rok vydání:</strong> {{ film.rok_vydani }}</p>
-    <p><strong>Žánr:</strong> {{ film.zanr|default:"–" }}</p>
-    <p><strong>Délka:</strong> {{ film.delka_minuty|default:"–" }} min</p>
-    <p><strong>Formát:</strong> {{ film.get_format_display }}</p>
-    <p><strong>Hodnocení:</strong> {{ film.hodnoceni|default:"neohodnoceno" }}</p>
-    {% if film.poznamka %}
-        <p><strong>Poznámka:</strong> {{ film.poznamka }}</p>
-    {% endif %}
-    <p>
-        <a href="{% url 'sbirka:film_list' %}">← Zpět na seznam filmů</a> |
-        <a href="{% url 'sbirka:film_update' pk=film.pk %}">Upravit</a> |
-        <a href="{% url 'sbirka:film_delete' pk=film.pk %}">Smazat</a>
-    </p>
+    <div class="detail-panel detail-panel--film">
+        <h1>{{ film.nazev }}</h1>
+        <dl class="detail-list">
+            <dt>Režisér</dt>
+            <dd>{{ film.reziser }}</dd>
+            <dt>Rok vydání</dt>
+            <dd>{{ film.rok_vydani }}</dd>
+            <dt>Žánr</dt>
+            <dd>{{ film.zanr|default:"–" }}</dd>
+            <dt>Délka</dt>
+            <dd>{{ film.delka_minuty|default:"–" }} min</dd>
+            <dt>Formát</dt>
+            <dd>{{ film.get_format_display }}</dd>
+            <dt>Hodnocení</dt>
+            <dd>{{ film.hodnoceni|default:"neohodnoceno" }}</dd>
+            {% if film.poznamka %}
+                <dt>Poznámka</dt>
+                <dd>{{ film.poznamka }}</dd>
+            {% endif %}
+        </dl>
+        <div class="detail-actions">
+            <a class="btn btn--secondary" href="{% url 'sbirka:film_list' %}">← Zpět na seznam filmů</a>
+            <a class="btn btn--film" href="{% url 'sbirka:film_update' pk=film.pk %}">Upravit</a>
+            <a class="btn btn--danger" href="{% url 'sbirka:film_delete' pk=film.pk %}">Smazat</a>
+        </div>
+    </div>
 {% endblock %}

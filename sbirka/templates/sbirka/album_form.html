@@ -5,11 +5,13 @@
 {% endblock %}
 
 {% block content %}
-    <h1>{% if album %}Upravit album{% else %}Nové album{% endif %}</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Uložit</button>
-    </form>
-    <p><a href="{% url 'sbirka:album_list' %}">← Zpět na seznam alb</a></p>
+    <div class="form-panel form-panel--album">
+        <h1>{% if album %}Upravit album{% else %}Nové album{% endif %}</h1>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn">Uložit</button>
+        </form>
+    </div>
+    <p><a class="btn btn--secondary" href="{% url 'sbirka:album_list' %}">← Zpět na seznam alb</a></p>
 {% endblock %}

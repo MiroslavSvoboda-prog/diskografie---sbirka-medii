@@ -4,15 +4,15 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}Diskografie{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'sbirka/css/style.css' %}">
 </head>
 <body>
     <nav>
-        <a href="{% url 'sbirka:home' %}">Domů</a> |
-        <a href="{% url 'sbirka:album_list' %}">Alba</a> |
-        <a href="{% url 'sbirka:film_list' %}">Filmy</a> |
+        <a href="{% url 'sbirka:home' %}">Domů</a>
+        <a href="{% url 'sbirka:album_list' %}">Alba</a>
+        <a href="{% url 'sbirka:film_list' %}">Filmy</a>
         <a href="{% url 'sbirka:kniha_list' %}">Knihy</a>
     </nav>
-    <hr>
     <main>
         {% block content %}
         {% endblock %}

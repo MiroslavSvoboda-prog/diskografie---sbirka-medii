@@ -4,14 +4,16 @@
 
 {% block content %}
     <h1>Knihy</h1>
-    <p><a href="{% url 'sbirka:kniha_create' %}">+ Přidat novou knihu</a></p>
+    <p><a class="btn" href="{% url 'sbirka:kniha_create' %}">+ Přidat novou knihu</a></p>
     <ul>
         {% for kniha in knihy %}
             <li>
-                <a href="{% url 'sbirka:kniha_detail' pk=kniha.pk %}">
-                    {{ kniha.nazev }}
-                </a>
-                – {{ kniha.autor }} ({{ kniha.rok_vydani }})
+                <div class="card card--kniha">
+                    <a href="{% url 'sbirka:kniha_detail' pk=kniha.pk %}">
+                        {{ kniha.nazev }}
+                    </a>
+                    – {{ kniha.autor }} ({{ kniha.rok_vydani }})
+                </div>
             </li>
         {% empty %}
             <li>Zatím žádné knihy.</li>

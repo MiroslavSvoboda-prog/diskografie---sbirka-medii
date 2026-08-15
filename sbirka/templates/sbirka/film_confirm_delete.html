@@ -3,10 +3,13 @@
 {% block title %}Smazat film – Diskografie{% endblock %}
 
 {% block content %}
-    <h1>Opravdu chceš smazat film "{{ film.nazev }}"?</h1>
-    <form method="post">
-        {% csrf_token %}
-        <button type="submit">Ano, smazat</button>
-        <a href="{% url 'sbirka:film_detail' pk=film.pk %}">Zrušit</a>
-    </form>
+    <div class="delete-panel">
+        <h1>Opravdu chceš smazat film „{{ film.nazev }}“?</h1>
+        <p>Tuto akci nelze vzít zpět.</p>
+        <form method="post" class="form-actions">
+            {% csrf_token %}
+            <button type="submit" class="btn btn--danger">Ano, smazat</button>
+            <a class="btn btn--secondary" href="{% url 'sbirka:film_detail' pk=film.pk %}">Zrušit</a>
+        </form>
+    </div>
 {% endblock %}

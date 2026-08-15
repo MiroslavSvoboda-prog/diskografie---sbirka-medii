@@ -84,10 +84,11 @@ Aplikace poběží na `http://127.0.0.1:8000/`, administrace na `http://127.0.0.
 - HTML šablony s dědičností (`base.html` + bloky)
 - Formuláře pro přidávání/editaci/mazání záznamů (CreateView, UpdateView, DeleteView)
 - Testy
-
+- Základní stylování (CSS) – barevné odlišení podle typu média
+  (alba/filmy/knihy), styling seznamů, detailů, formulářů
+  a domovské stránky
 
 📋 Plánováno:
-- Základní stylování (CSS)
 - CLI nástroj nad stejnými modely
 
 ## Autor

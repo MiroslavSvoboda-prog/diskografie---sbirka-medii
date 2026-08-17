@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
 
+from .forms import AlbumForm, FilmForm, KnihaForm
 from .models import Album, Film, Kniha
 
 
@@ -49,6 +50,142 @@ class KnihaModelTest(TestCase):
 
     def test_default_format(self):
         self.assertEqual(self.kniha.format, 'papir')
+
+
+# --- Formuláře ---
+# Pokrývají jen validace, které skutečně existují ve forms.py/models.py:
+# nazev/interpret/reziser/autor jsou povinná pole, rok_vydani má
+# MinValueValidator(0) (z PositiveIntegerField), hodnoceni má choices 1-5
+# a isbn je omezeno na max_length=20 (žádný regex/checksum validátor pro
+# formát ISBN v kódu není, proto se netestuje).
+
+class AlbumFormTest(TestCase):
+    def setUp(self):
+        self.valid_data = {
+            'nazev': 'Kid A', 'interpret': 'Radiohead', 'rok_vydani': 2000,
+            'zanr': 'Alternative rock', 'pocet_skladeb': 10, 'format': 'vinyl',
+            'hodnoceni': 5, 'poznamka': '',
+        }
+
+    def test_validni_data(self):
+        form = AlbumForm(data=self.valid_data)
+        self.assertTrue(form.is_valid())
+
+    def test_chybejici_nazev(self):
+        data = self.valid_data.copy()
+        data['nazev'] = ''
+        form = AlbumForm(data=data)
+        self.assertFalse(form.is_valid())
+        self.assertIn('nazev', form.errors)
+
+    def test_zaporny_rok_vydani(self):
+        data = self.valid_data.copy()
+        data['rok_vydani'] = -1
+        form = AlbumForm(data=data)
+        self.assertFalse(form.is_valid())
+        self.assertIn('rok_vydani', form.errors)
+
+    def test_hodnoceni_mimo_rozsah(self):
+        data = self.valid_data.copy()
+        data['hodnoceni'] = 6
+        form = AlbumForm(data=data)
+        self.assertFalse(form.is_valid())
+        self.assertIn('hodnoceni', form.errors)
+
+
+class FilmFormTest(TestCase):
+    def setUp(self):
+        self.valid_data = {
+            'nazev': 'Matrix Reloaded', 'reziser': 'Wachowski', 'rok_vydani': 2003,
+            'zanr': 'Sci-fi', 'delka_minuty': 138, 'format': 'bluray',
+            'hodnoceni': 4, 'poznamka': '',
+        }
+
+    def test_validni_data(self):
+        form = FilmForm(data=self.valid_data)
+        self.assertTrue(form.is_valid())
+
+    def test_chybejici_nazev(self):
+        data = self.valid_data.copy()
+        data['nazev'] = ''
+        form = FilmForm(data=data)
+        self.assertFalse(form.is_valid())
+        self.assertIn('nazev', form.errors)
+
+    def test_zaporny_rok_vydani(self):
+        data = self.valid_data.copy()
+        data['rok_vydani'] = -1
+        form = FilmForm(data=data)
+        self.assertFalse(form.is_valid())
+        self.assertIn('rok_vydani', form.errors)
+
+    def test_hodnoceni_mimo_rozsah(self):
+        data = self.valid_data.copy()
+        data['hodnoceni'] = 6
+        form = FilmForm(data=data)
+        self.assertFalse(form.is_valid())
+        self.assertIn('hodnoceni', form.errors)
+
+
+class KnihaFormTest(TestCase):
+    def setUp(self):
+        self.valid_data = {
+            'nazev': 'Farma zvířat', 'autor': 'George Orwell', 'rok_vydani': 1945,
+            'zanr': 'Satira', 'pocet_stran': 112, 'isbn': '978-0451526342',
+            'format': 'ekniha', 'hodnoceni': 5, 'poznamka': '',
+        }
+
+    def test_validni_data(self):
+        form = KnihaForm(data=self.valid_data)
+        self.assertTrue(form.is_valid())
+
+    def test_chybejici_nazev(self):
+        data = self.valid_data.copy()
+        data['nazev'] = ''
+        form = KnihaForm(data=data)
+        self.assertFalse(form.is_valid())
+        self.assertIn('nazev', form.errors)
+
+    def test_zaporny_rok_vydani(self):
+        data = self.valid_data.copy()
+        data['rok_vydani'] = -1
+        form = KnihaForm(data=data)
+        self.assertFalse(form.is_valid())
+        self.assertIn('rok_vydani', form.errors)
+
+    def test_hodnoceni_mimo_rozsah(self):
+        data = self.valid_data.copy()
+        data['hodnoceni'] = 6
+        form = KnihaForm(data=data)
+        self.assertFalse(form.is_valid())
+        self.assertIn('hodnoceni', form.errors)
+
+    def test_isbn_prilis_dlouhe(self):
+        data = self.valid_data.copy()
+        data['isbn'] = '1' * 25
+        form = KnihaForm(data=data)
+        self.assertFalse(form.is_valid())
+        self.assertIn('isbn', form.errors)
+
+    def test_isbn_neplatny_format(self):
+        data = self.valid_data.copy()
+        data['isbn'] = 'ABCDEFGHIJ'
+        form = KnihaForm(data=data)
+        self.assertFalse(form.is_valid())
+        self.assertIn('isbn', form.errors)
+
+    def test_isbn_neplatny_kontrolni_soucet(self):
+        data = self.valid_data.copy()
+        data['isbn'] = '978-0451526343'  # poslední číslice pozměněna, formát OK, součet ne
+        form = KnihaForm(data=data)
+        self.assertFalse(form.is_valid())
+        self.assertIn('isbn', form.errors)
+
+    def test_isbn_platne_isbn10(self):
+        data = self.valid_data.copy()
+        data['isbn'] = '0-306-40615-2'
+        form = KnihaForm(data=data)
+        self.assertTrue(form.is_valid())
 
 
 # --- Home view ---

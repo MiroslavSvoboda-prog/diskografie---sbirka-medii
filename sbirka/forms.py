@@ -1,3 +1,5 @@
+import re
+
 from django import forms
 from .models import Album, Film, Kniha
 
@@ -62,3 +64,40 @@ class KnihaForm(MediaFormMixin, forms.ModelForm):
             'hodnoceni': 'Hodnocení',
             'poznamka': 'Poznámka',
         }
+
+    def clean_isbn(self):
+        isbn = self.cleaned_data.get('isbn', '')
+        if not isbn:
+            return isbn
+
+        cislice = re.sub(r'[\s-]', '', isbn).upper()
+        if not re.fullmatch(r'\d{9}[\dX]|\d{13}', cislice):
+            raise forms.ValidationError(
+                'Zadejte platné ISBN-10 nebo ISBN-13 (číslice, volitelně oddělené pomlčkami).'
+            )
+
+        if len(cislice) == 10:
+            platne = self._je_platne_isbn10(cislice)
+        else:
+            platne = self._je_platne_isbn13(cislice)
+
+        if not platne:
+            raise forms.ValidationError('Zadané ISBN má neplatný kontrolní součet.')
+
+        return isbn
+
+    @staticmethod
+    def _je_platne_isbn10(cislice):
+        soucet = sum(
+            (10 - i) * (10 if znak == 'X' else int(znak))
+            for i, znak in enumerate(cislice)
+        )
+        return soucet % 11 == 0
+
+    @staticmethod
+    def _je_platne_isbn13(cislice):
+        soucet = sum(
+            (1 if i % 2 == 0 else 3) * int(znak)
+            for i, znak in enumerate(cislice)
+        )
+        return soucet % 10 == 0

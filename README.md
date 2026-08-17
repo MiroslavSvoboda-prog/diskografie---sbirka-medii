@@ -34,8 +34,9 @@ Pokrytí:
 - **CRUD views** (Album, Film, Kniha) – list, detail (i 404 pro neexistující), create
   (GET+POST), update, delete – ověřuje status kódy, šablony, přesměrování a skutečné
   změny v databázi
-
-Zatím chybí: testy validace formulářů.
+- **Formulářová validace** (Album, Film, Kniha) – povinná pole, hodnoty mimo povolený
+  rozsah (např. hodnocení, rok vydání); u Knihy navíc validace formátu a kontrolního
+  součtu ISBN (ISBN-10 i ISBN-13)
 
 ## Struktura projektu
 diskografie_project/
@@ -87,6 +88,7 @@ Aplikace poběží na `http://127.0.0.1:8000/`, administrace na `http://127.0.0.
 - Základní stylování (CSS) – barevné odlišení podle typu média
   (alba/filmy/knihy), styling seznamů, detailů, formulářů
   a domovské stránky
+- Formulářová validace (povinná pole, rozsahy hodnot, ISBN kontrolní součet)
 
 📋 Plánováno:
 - CLI nástroj nad stejnými modely

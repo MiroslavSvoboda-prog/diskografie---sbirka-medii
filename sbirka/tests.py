@@ -1,3 +1,8 @@
+from io import StringIO
+from unittest.mock import patch
+
+from django.core.management import call_command
+from django.core.management.base import CommandError
 from django.test import TestCase
 from django.urls import reverse
 
@@ -343,3 +348,173 @@ class KnihaViewsTest(TestCase):
         response = self.client.post(reverse('sbirka:kniha_delete', args=[self.kniha.pk]))
         self.assertRedirects(response, reverse('sbirka:kniha_list'))
         self.assertEqual(Kniha.objects.count(), 0)
+
+
+# --- CLI příkaz `media` ---
+# Pořadí polí zadávaných přes input() odpovídá pořadí AlbumForm.Meta.fields:
+# nazev, interpret, rok_vydani, zanr, pocet_skladeb, format, hodnoceni, poznamka.
+
+class MediaCommandListTest(TestCase):
+    def setUp(self):
+        self.album = Album.objects.create(
+            nazev='OK Computer', interpret='Radiohead', rok_vydani=1997,
+        )
+
+    def test_list_vypise_polozky(self):
+        out = StringIO()
+        call_command('media', 'list', 'album', stdout=out)
+        self.assertIn('OK Computer', out.getvalue())
+        self.assertIn('Radiohead', out.getvalue())
+
+    def test_list_se_sortem(self):
+        Album.objects.create(nazev='Absolution', interpret='Muse', rok_vydani=2003)
+        out = StringIO()
+        call_command('media', 'list', 'album', sort='nazev', stdout=out)
+        pozice_absolution = out.getvalue().find('Absolution')
+        pozice_ok_computer = out.getvalue().find('OK Computer')
+        self.assertNotEqual(pozice_absolution, -1)
+        self.assertLess(pozice_absolution, pozice_ok_computer)
+
+    def test_list_prazdny_typ(self):
+        out = StringIO()
+        call_command('media', 'list', 'film', stdout=out)
+        self.assertIn('Žádné položky nenalezeny', out.getvalue())
+
+    def test_list_neplatny_typ_vyvola_chybu(self):
+        with self.assertRaises(CommandError):
+            call_command('media', 'list', 'neplatny-typ')
+
+
+class MediaCommandDetailTest(TestCase):
+    def setUp(self):
+        self.kniha = Kniha.objects.create(
+            nazev='1984', autor='George Orwell', rok_vydani=1949, isbn='978-0451524935',
+        )
+
+    def test_detail_vypise_vsechna_pole(self):
+        out = StringIO()
+        call_command('media', 'detail', 'kniha', self.kniha.pk, stdout=out)
+        self.assertIn('1984', out.getvalue())
+        self.assertIn('George Orwell', out.getvalue())
+        self.assertIn('978-0451524935', out.getvalue())
+
+    def test_detail_neexistujici_id_vyvola_chybu(self):
+        with self.assertRaises(CommandError) as chyba:
+            call_command('media', 'detail', 'kniha', 9999)
+        self.assertIn('9999', str(chyba.exception))
+
+
+class MediaCommandAddTest(TestCase):
+    def setUp(self):
+        self.album = Album.objects.create(
+            nazev='OK Computer', interpret='Radiohead', rok_vydani=1997,
+        )
+
+    def test_add_s_validnimi_daty_ulozi_polozku(self):
+        vstupy = ['Kid A', 'Radiohead', '2000', 'Alternative rock', '10', 'vinyl', '5', '']
+        out = StringIO()
+        with patch('builtins.input', side_effect=vstupy):
+            call_command('media', 'add', 'album', stdout=out)
+
+        self.assertEqual(Album.objects.count(), 2)
+        nova = Album.objects.get(nazev='Kid A')
+        self.assertEqual(nova.interpret, 'Radiohead')
+        self.assertEqual(nova.rok_vydani, 2000)
+        self.assertEqual(nova.format, 'vinyl')
+        self.assertIn(str(nova.pk), out.getvalue())
+
+    def test_add_s_nevalidnimi_daty_a_prerusenim_nic_neulozi(self):
+        # nazev je prázdný (povinné pole) -> formulář je neplatný, uživatel operaci přeruší
+        vstupy = ['', 'Radiohead', '2000', '', '', 'cd', '', '', 'ne']
+        out, err = StringIO(), StringIO()
+        with patch('builtins.input', side_effect=vstupy):
+            call_command('media', 'add', 'album', stdout=out, stderr=err)
+
+        self.assertEqual(Album.objects.count(), 1)
+        self.assertIn('nazev', err.getvalue())
+        self.assertIn('zrušeno', out.getvalue())
+
+    def test_add_prerusena_ctrl_c_nic_neulozi(self):
+        vstupy = ['Kid A', KeyboardInterrupt]
+        out = StringIO()
+        with patch('builtins.input', side_effect=vstupy):
+            call_command('media', 'add', 'album', stdout=out)
+
+        self.assertEqual(Album.objects.count(), 1)
+        self.assertIn('přerušena', out.getvalue())
+
+    def test_add_s_nevalidnimi_daty_umozni_opravu(self):
+        # 1. pokus: prázdný název -> chyba; uživatel odpoví "ano" a opraví jen název,
+        # ostatní pole ponechá prázdná, takže se použijí hodnoty z prvního pokusu.
+        prvni_pokus = ['', 'Radiohead', '2000', '', '', 'cd', '', '']
+        oprava = ['Kid A', '', '', '', '', '', '', '']
+        vstupy = prvni_pokus + ['ano'] + oprava
+        out, err = StringIO(), StringIO()
+        with patch('builtins.input', side_effect=vstupy):
+            call_command('media', 'add', 'album', stdout=out, stderr=err)
+
+        self.assertEqual(Album.objects.count(), 2)
+        nova = Album.objects.get(nazev='Kid A')
+        self.assertEqual(nova.interpret, 'Radiohead')
+        self.assertEqual(nova.rok_vydani, 2000)
+        self.assertEqual(nova.format, 'cd')
+
+
+class MediaCommandEditTest(TestCase):
+    def setUp(self):
+        self.album = Album.objects.create(
+            nazev='OK Computer', interpret='Radiohead', rok_vydani=1997,
+        )
+
+    def test_edit_zmeni_pouze_zadane_pole(self):
+        # Prázdný Enter u všech ostatních polí ponechá jejich aktuální hodnotu.
+        vstupy = ['OK Computer (Reedice)', '', '', '', '', '', '', '']
+        out = StringIO()
+        with patch('builtins.input', side_effect=vstupy):
+            call_command('media', 'edit', 'album', self.album.pk, stdout=out)
+
+        self.album.refresh_from_db()
+        self.assertEqual(self.album.nazev, 'OK Computer (Reedice)')
+        self.assertEqual(self.album.interpret, 'Radiohead')
+        self.assertEqual(self.album.rok_vydani, 1997)
+
+    def test_edit_pomlckou_vyprazdni_volitelne_pole(self):
+        self.album.poznamka = 'Oblíbené album'
+        self.album.save()
+        # Enter u ostatních polí ponechá aktuální hodnotu, '-' u poznámky ji vymaže.
+        vstupy = ['', '', '', '', '', '', '', '-']
+        out = StringIO()
+        with patch('builtins.input', side_effect=vstupy):
+            call_command('media', 'edit', 'album', self.album.pk, stdout=out)
+
+        self.album.refresh_from_db()
+        self.assertEqual(self.album.poznamka, '')
+        self.assertEqual(self.album.nazev, 'OK Computer')
+
+    def test_edit_neexistujici_id_vyvola_chybu(self):
+        with self.assertRaises(CommandError):
+            call_command('media', 'edit', 'album', 9999)
+
+
+class MediaCommandDeleteTest(TestCase):
+    def setUp(self):
+        self.album = Album.objects.create(
+            nazev='OK Computer', interpret='Radiohead', rok_vydani=1997,
+        )
+
+    def test_delete_s_potvrzenim_smaze_polozku(self):
+        out = StringIO()
+        with patch('builtins.input', return_value='ano'):
+            call_command('media', 'delete', 'album', self.album.pk, stdout=out)
+        self.assertEqual(Album.objects.count(), 0)
+
+    def test_delete_bez_potvrzeni_nic_nesmaze(self):
+        out = StringIO()
+        with patch('builtins.input', return_value='ne'):
+            call_command('media', 'delete', 'album', self.album.pk, stdout=out)
+        self.assertEqual(Album.objects.count(), 1)
+        self.assertIn('zrušeno', out.getvalue())
+
+    def test_delete_neexistujici_id_vyvola_chybu(self):
+        with self.assertRaises(CommandError):
+            call_command('media', 'delete', 'album', 9999)
